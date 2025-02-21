@@ -1,3 +1,6 @@
+import 'package:donation_app_v1/const_values/title_values.dart';
+import 'package:donation_app_v1/enums/currency_enum.dart';
+import 'package:donation_app_v1/enums/drawer_enum.dart';
 import 'package:donation_app_v1/models/drawer_model.dart';
 import 'package:donation_app_v1/enums/card_type_enum.dart';
 import 'package:donation_app_v1/models/card_model.dart';
@@ -107,7 +110,23 @@ class _ProfilePageState extends State<ProfilePage> {
       });
     }
   }
-
+  String formatAmount(int amount) {
+    final profileProvider= Provider.of<ProfileProvider>(context,listen: false);
+    final currentCurrency = Currency.values.firstWhere((element) => element.code == profileProvider.profile!.settings.currency);
+    if (amount >= 1000000) {
+      double result = amount / 1000000;
+      return result == result.toInt().toDouble()
+          ? '${currentCurrency.symbol} ${result.toInt()}M'
+          : '${currentCurrency.symbol} ${result.toStringAsFixed(1)}M';
+    } else if (amount >= 1000) {
+      double result = amount / 1000;
+      return result == result.toInt().toDouble()
+          ? '${currentCurrency.symbol} ${result.toInt()}k'
+          : '${currentCurrency.symbol} ${result.toStringAsFixed(1)}k';
+    } else {
+      return  "${currentCurrency.symbol} ${currentCurrency.convert(amount.toDouble(),currentCurrency)}";
+    }
+  }
   void _addDonation() {
     final amount = selectedPredefinedAmount ?? int.tryParse(_amountController.text.trim());
     if (amount != null) {
@@ -116,11 +135,20 @@ class _ProfilePageState extends State<ProfilePage> {
       print("Donation of \$${amount} added.");
     }
   }
-  String formatAmountWithBullets(int amount) {
-    // Use NumberFormat from the intl package
-    final formatter = NumberFormat('#,###', 'en_US');
-    return formatter.format(amount).replaceAll(',', '.');
+  String formatAmountWithBullets(int amount, BuildContext context) {
+    final profileProvider = Provider.of<ProfileProvider>(context, listen: false);
+    final currentCurrency = Currency.values.firstWhere(
+          (element) => element.code == profileProvider.profile!.settings.currency,
+    );
+
+    // Convert amount to currency format
+    double convertedAmount = currentCurrency.convert(amount.toDouble(), currentCurrency);
+    final currencyFormat = "${currentCurrency.symbol} ${currentCurrency.convert(amount.toDouble(),currentCurrency)}";
+
+    // Replace commas with dots for bullet-style formatting
+    return currencyFormat.replaceAll(',', '.');
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -128,11 +156,11 @@ class _ProfilePageState extends State<ProfilePage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Profile"),
+        title: Text(PageTitles.getTitle(profileProvider.profile!.settings.language, 'profile_page_title')),
         centerTitle: true,
         backgroundColor: Colors.teal,
       ),
-      drawer: DonationAppDrawer(),
+      drawer: DonationAppDrawer(drawerIndex: DrawerItem.profile.index,),
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -201,7 +229,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                       ),
                                     ),
                                     Text(
-                                      "${formatAmountWithBullets(donationsByUsername['totalAmount'] ?? 0)} \$",
+                                      "${formatAmountWithBullets(donationsByUsername['totalAmount'] ?? 0,context)}",
                                       style:  TextStyle(
                                           fontSize: 18,
                                           fontWeight: FontWeight.bold,
@@ -401,7 +429,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           color: Colors.white, size: 30),
                       const SizedBox(width: 8),
                       Text(
-                        "\$${formatAmountWithBullets(donation['amount'])}",
+                        "${formatAmountWithBullets(donation['amount'],context)}",
                         style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,

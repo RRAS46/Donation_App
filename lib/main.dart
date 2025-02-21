@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
+import 'package:donation_app_v1/models/settings_model.dart';
 import 'package:donation_app_v1/notification_functions.dart';
 import 'package:donation_app_v1/providers/provider.dart';
 import 'package:donation_app_v1/screens/about_us_screen.dart';
@@ -11,6 +12,7 @@ import 'package:donation_app_v1/screens/profile_screen.dart';
 import 'package:donation_app_v1/screens/settings_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -31,7 +33,9 @@ void main() async {
   );
 
   await flutterLocalNotificationsPlugin.initialize(initializationSettings);
-
+  await Hive.initFlutter();
+  Hive.registerAdapter(SettingsAdapter());
+  await Hive.openBox<Settings>('settingsBox');
   await Supabase.initialize(
     url: 'https://zmowwytgkbchbejxggac.supabase.co',
     anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inptb3d3eXRna2JjaGJlanhnZ2FjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzIwMjQ5NTcsImV4cCI6MjA0NzYwMDk1N30.wwXOJUldI8MhDlNrJboKJqR3z1otrZXIXo0c1a-KbKU',
@@ -69,7 +73,8 @@ class _MyAppState extends State<MyApp> {
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Authentication Demo',
-        home: const SignInPage(),
+
+        home: SignInPage(),
         routes: {
           '/signIn': (_) =>  SignInPage(),
           '/signUp': (_) =>  SignUpPage(),

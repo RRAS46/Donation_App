@@ -24,21 +24,21 @@ class Profile {
   factory Profile.fromJson(Map<String, dynamic> json) {
     return Profile(
       // Convert id to string, even if it's an int.
-      id: json['id'] != null ? json['id'].toString() : '',
+      id: json['id']?.toString() ?? '',
       // Provide a default empty string if email is not provided.
       email: json['email'] as String? ?? '',
       username: json['username'] as String? ?? '',
       imageUrl: json['image_url'] as String? ?? '',
       settings: json['settings'] != null
           ? Settings.fromJson(Map<String, dynamic>.from(json['settings']))
-          : Settings(theme: 'light', language: 'en', notificationsEnabled: true),
+          : Settings.defaultSettings,
       paymentCards: (json['payment_cards'] as List<dynamic>?)
-          ?.map((e) =>
-          PaymentCard.fromJson(Map<String, dynamic>.from(e)))
+          ?.map((e) => PaymentCard.fromJson(Map<String, dynamic>.from(e)))
           .toList() ??
           [],
     );
   }
+
 
   /// Converts the Profile instance into a JSON object.
   Map<String, dynamic> toJson() {

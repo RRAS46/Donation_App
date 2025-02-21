@@ -1,11 +1,13 @@
+import 'package:donation_app_v1/const_values/title_values.dart';
+import 'package:donation_app_v1/enums/drawer_enum.dart';
 import 'package:donation_app_v1/models/drawer_model.dart';
+import 'package:donation_app_v1/providers/provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class AboutUsPage extends StatelessWidget {
   const AboutUsPage({Key? key}) : super(key: key);
-
-
 
   Future<void> _launchInAppWithBrowserOptions(Uri url) async {
     if (!await launchUrl(
@@ -16,12 +18,15 @@ class AboutUsPage extends StatelessWidget {
       throw Exception('Could not launch $url');
     }
   }
+
   @override
   Widget build(BuildContext context) {
+    final profileProvider= Provider.of<ProfileProvider>(context,listen: false);
+
     return Scaffold(
-      drawer: DonationAppDrawer(),
+      drawer: DonationAppDrawer(drawerIndex: DrawerItem.about.index,),
       appBar: AppBar(
-        title: const Text('Σχετικά με Εμάς'),
+        title: Text(PageTitles.getTitle(profileProvider.profile!.settings.language, 'about_us_page_title')),
         backgroundColor: Colors.teal,
         centerTitle: true,
       ),
@@ -37,7 +42,6 @@ class AboutUsPage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Header with Image and Overlay
               Container(
                 height: 250,
                 child: Stack(
@@ -46,7 +50,7 @@ class AboutUsPage extends StatelessWidget {
                       height: 250,
                       decoration: const BoxDecoration(
                         image: DecorationImage(
-                          image: AssetImage('assets/images/panther_racing_team.jpg'), // Replace with your image
+                          image: AssetImage('assets/images/panther_racing_team.jpg'),
                           fit: BoxFit.cover,
                         ),
                       ),
@@ -76,65 +80,64 @@ class AboutUsPage extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 20),
-
-              // Mission Section
               _buildSection(
                 title: 'Η Αποστολή μας',
-                content:
-                'Στο Panther Racing Team AUTH, συνδυάζουμε την ακαδημαϊκή γνώση με την πρακτική εμπειρία για να σχεδιάσουμε, να κατασκευάσουμε και να συναρμολογήσουμε μοτοσικλέτες υψηλών επιδόσεων από την αρχή. Στόχος μας είναι να διευρύνουμε τα όρια της καινοτομίας και να εκπροσωπήσουμε το Αριστοτέλειο Πανεπιστήμιο Θεσσαλονίκης σε παγκόσμιο επίπεδο.',
+                content: 'Στο Panther Racing Team AUTH, συνδυάζουμε την ακαδημαϊκή γνώση με την πρακτική εμπειρία για να σχεδιάσουμε, να κατασκευάσουμε και να συναρμολογήσουμε μοτοσικλέτες υψηλών επιδόσεων από την αρχή.',
                 icon: Icons.lightbulb_outline,
               ),
               const Divider(),
-
-              // Journey Section
               _buildSection(
                 title: 'Το Ταξίδι',
-                content:
-                'Από την πρώτη ιδέα έως την κατασκευή κάθε εξαρτήματος, το ταξίδι μας αντικατοπτρίζει την ομαδικότητα, τη δημιουργικότητα και την επιμονή. Κάθε μοτοσικλέτα που κατασκευάζουμε είναι μια απόδειξη της αφοσίωσης και του πάθους μας για τον μηχανοκίνητο αθλητισμό.',
+                content: 'Από την πρώτη ιδέα έως την κατασκευή κάθε εξαρτήματος, το ταξίδι μας αντικατοπτρίζει την ομαδικότητα, τη δημιουργικότητα και την επιμονή.',
                 icon: Icons.emoji_events_outlined,
               ),
               const Divider(),
-
-              // Motostudent Section
               _buildSection(
                 title: 'Motostudent - Μια Παγκόσμια Σκηνή',
-                content:
-                'Το Motostudent είναι ένας διεθνής διαγωνισμός πανεπιστημιακού επιπέδου που πραγματοποιείται στην εμβληματική πίστα της Αραγονίας στην Ισπανία. Αυτή η πλατφόρμα μας δίνει την ευκαιρία να δοκιμάσουμε τις μηχανικές μας δεξιότητες και την καινοτομία μας ενάντια στις καλύτερες ομάδες παγκοσμίως.',
+                content: 'Το Motostudent είναι ένας διεθνής διαγωνισμός που μας δίνει την ευκαιρία να δοκιμάσουμε τις μηχανικές μας δεξιότητες και την καινοτομία μας.',
                 icon: Icons.flag_outlined,
               ),
               const Divider(),
-
-              // Support Section
               _buildSection(
                 title: 'Γιατί Χρειαζόμαστε τη Στήριξή σας',
-                content:
-                'Η κατασκευή μιας μοτοσικλέτας έτοιμης για αγώνες απαιτεί σημαντικούς πόρους. Η υποστήριξή σας μας βοηθά να αποκτήσουμε υλικά, να βελτιώσουμε το σχέδιό μας και να καλύψουμε τα έξοδα ταξιδιού για τον διαγωνισμό. Μαζί, μπορούμε να εμπνεύσουμε την επόμενη γενιά μηχανικών.',
+                content: 'Η υποστήριξή σας μας βοηθά να αποκτήσουμε υλικά, να βελτιώσουμε το σχέδιό μας και να καλύψουμε τα έξοδα ταξιδιού για τον διαγωνισμό.',
                 icon: Icons.volunteer_activism,
               ),
-              const SizedBox(height: 20),
-
-              // Call to Action Button
+              const Divider(),
+              _buildSection(
+                title: 'Στηρίξτε μας',
+                content: 'Ακολουθήστε μας στα κοινωνικά μέσα και υποστηρίξτε την ομάδα μας με ένα απλό κλικ.',
+                icon: Icons.support,
+              ),
               Center(
-                child: ElevatedButton.icon(
-                  onPressed: () async {
-                    _launchInAppWithBrowserOptions(Uri.parse('https://instagram.com/panther_racing'));
-                  },
-
-                  icon: const Icon(Icons.favorite, color: Colors.white),
-                  label: const Text(
-                    'Στηρίξτε μας',
-                    style: TextStyle(fontSize: 16,color: Colors.white),
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.teal.shade600,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 40.0,
-                      vertical: 15.0,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    IconButton(
+                      icon: Icon(Icons.favorite, color: Colors.teal.shade600),
+                      onPressed: () => _launchInAppWithBrowserOptions(Uri.parse('https://instagram.com/panther_racing')),
                     ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20.0),
+                    IconButton(
+                      icon: Icon(Icons.language, color: Colors.blue.shade600),
+                      onPressed: () => _launchInAppWithBrowserOptions(Uri.parse('https://pantherauth.gr')),
                     ),
-                  ),
+                    IconButton(
+                      icon: Icon(Icons.contact_mail, color: Colors.green.shade600),
+                      onPressed: () => _launchInAppWithBrowserOptions(Uri.parse('mailto:support@panther_racing.com')),
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.video_library, color: Colors.red.shade600),
+                      onPressed: () => _launchInAppWithBrowserOptions(Uri.parse('https://youtube.com/panther_racing')),
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.tiktok, color: Colors.black),
+                      onPressed: () => _launchInAppWithBrowserOptions(Uri.parse('https://tiktok.com/@panther_racing')),
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.link, color: Colors.blueAccent),
+                      onPressed: () => _launchInAppWithBrowserOptions(Uri.parse('https://linkedin.com/company/panther_racing')),
+                    ),
+                  ],
                 ),
               ),
               const SizedBox(height: 20),
@@ -145,7 +148,6 @@ class AboutUsPage extends StatelessWidget {
     );
   }
 
-  // Section Widget
   Widget _buildSection({
     required String title,
     required String content,
@@ -156,10 +158,8 @@ class AboutUsPage extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Icon
           Icon(icon, size: 30, color: Colors.teal),
           const SizedBox(width: 16),
-          // Text Content
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
