@@ -2,13 +2,16 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:math';
 
+import 'package:donation_app_v1/const_values/donation_card_page_values.dart';
 import 'package:donation_app_v1/enums/currency_enum.dart';
 import 'package:donation_app_v1/models/donation_bar_chart_model.dart';
+import 'package:donation_app_v1/models/settings_model.dart';
 import 'package:donation_app_v1/providers/provider.dart';
 import 'package:donation_app_v1/qr_code.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
@@ -82,6 +85,18 @@ class _DonationStatisticsPageState extends State<DonationStatisticsPage> with Ti
     _timer.cancel();
     super.dispose();
   }
+
+  String getCurrentLanguage()  {
+    // Ensure that the Hive box is open. If already open, this returns the box immediately.
+    final Box<Settings> settingsBox = Hive.box<Settings>('settingsBox');
+
+    // Retrieve stored settings or use default settings if none are stored.
+    final Settings settings = settingsBox.get('userSettings', defaultValue: Settings.defaultSettings)!;
+
+    // Return the current language as an enum.
+    return  settings.language;
+  }
+
   Duration _calculateRemainingDuration(String timestampz) {
     try {
       // Parse the timestamp string into a DateTime object
@@ -110,7 +125,7 @@ class _DonationStatisticsPageState extends State<DonationStatisticsPage> with Ti
     final seconds = twoDigits(duration.inSeconds.remainder(60));
 
     if (days > 0) {
-      return '$days days | $hours:$minutes:$seconds';
+      return '$days ${DetailsCardLabels.getLabel(getCurrentLanguage(), 'timer_days_value')} | $hours:$minutes:$seconds';
     } else {
       return '$hours:$minutes:$seconds';
     }
@@ -251,7 +266,7 @@ class _DonationStatisticsPageState extends State<DonationStatisticsPage> with Ti
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              "Campaign Progress",
+                              DetailsCardLabels.getLabel(getCurrentLanguage(), 'campaign_progress_value'),
                               style: TextStyle(
                                 fontSize: 20.0,
                                 fontWeight: FontWeight.bold,
@@ -282,7 +297,7 @@ class _DonationStatisticsPageState extends State<DonationStatisticsPage> with Ti
                             ),
                             Positioned.fill(
                               child: Center(
-                                child: Text((((widget.amountRaised / widget.goal) * 100) >= 100) ? "Completed" :
+                                child: Text((((widget.amountRaised / widget.goal) * 100) >= 100) ? DetailsCardLabels.getLabel(getCurrentLanguage(), 'completed_text_value') :
                                 "${((widget.amountRaised / widget.goal) * 100).toStringAsFixed(1)}%",
                                   style: TextStyle(
                                     fontSize: 14.0,
@@ -304,7 +319,7 @@ class _DonationStatisticsPageState extends State<DonationStatisticsPage> with Ti
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  "Raised",
+                                  DetailsCardLabels.getLabel(getCurrentLanguage(), 'raised_text_value'),
                                   style: TextStyle(
                                     fontSize: 14.0,
                                     fontWeight: FontWeight.w500,
@@ -331,7 +346,7 @@ class _DonationStatisticsPageState extends State<DonationStatisticsPage> with Ti
                               crossAxisAlignment: CrossAxisAlignment.end,
                               children: [
                                 Text(
-                                  "Goal",
+                                  DetailsCardLabels.getLabel(getCurrentLanguage(), 'goal_text_value'),
                                   style: TextStyle(
                                     fontSize: 14.0,
                                     fontWeight: FontWeight.w500,
@@ -363,12 +378,13 @@ class _DonationStatisticsPageState extends State<DonationStatisticsPage> with Ti
                             ),
                             child: Center(
                               child: Text(
-                                "⏳ Time Left: ${_formatDuration(remainingTime)}",
+                                "⏳ ${DetailsCardLabels.getLabel(getCurrentLanguage(), 'time_left_text_value')}: ${_formatDuration(remainingTime)}",
                                 style: TextStyle(
                                   fontSize: 16.0,
                                   fontWeight: FontWeight.bold,
                                   color: Colors.white,
                                 ),
+                                textAlign: TextAlign.center,
                               ),
                             ),
                           ),
@@ -380,7 +396,7 @@ class _DonationStatisticsPageState extends State<DonationStatisticsPage> with Ti
                 Divider(color: Colors.grey.shade400),
 
                 Text(
-                  "Description",
+                  DetailsCardLabels.getLabel(getCurrentLanguage(), 'description_title_value'),
                   style: TextStyle(
                     fontSize: 26.0, // Slightly larger for prominence
                     fontWeight: FontWeight.w600,
@@ -410,7 +426,7 @@ class _DonationStatisticsPageState extends State<DonationStatisticsPage> with Ti
 
                 // Donation Breakdown Chart
                 Text(
-                  "Donation Breakdown",
+                  DetailsCardLabels.getLabel(getCurrentLanguage(), 'donation_breakdown_value'),
                   style: TextStyle(
                     fontSize: 20.0,
                     fontWeight: FontWeight.bold,
@@ -437,7 +453,7 @@ class _DonationStatisticsPageState extends State<DonationStatisticsPage> with Ti
 
                 // Donation Items with Description
                 Text(
-                  "Donation Item Details",
+                  DetailsCardLabels.getLabel(getCurrentLanguage(), 'donation_itme_details_value'),
                   style: TextStyle(
                     fontSize: 22.0,
                     fontWeight: FontWeight.bold,
@@ -462,7 +478,7 @@ class _DonationStatisticsPageState extends State<DonationStatisticsPage> with Ti
                   child: widget.statisticsData.isEmpty
                       ? Center(
                     child: Text(
-                      "No Donations!",
+                      DetailsCardLabels.getLabel(getCurrentLanguage(), 'no_donations_text_value'),
                       style: TextStyle(
                         fontSize: 20,
                         color: Colors.grey.shade600,

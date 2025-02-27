@@ -1,5 +1,6 @@
 import 'package:donation_app_v1/const_values/drawer_values.dart';
 import 'package:donation_app_v1/providers/provider.dart';
+import 'package:donation_app_v1/screens/lock_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:donation_app_v1/qr_code_scanner.dart';
 import 'package:donation_app_v1/screens/about_us_screen.dart';
@@ -20,6 +21,7 @@ enum DrawerItem {
   feedback,
   partners,
   settings,
+  lock,
   privacy,
   support,
   terms,
@@ -49,6 +51,8 @@ extension DrawerItemExtension on DrawerItem {
         return MenuTiles.getTile(langCode, 'partners_tile');
       case DrawerItem.settings:
         return MenuTiles.getTile(langCode, 'settings_tile');
+      case DrawerItem.lock:
+        return MenuTiles.getTile(langCode, 'lock_tile');
       case DrawerItem.privacy:
         return MenuTiles.getTile(langCode, 'privacy_security_tile');
       case DrawerItem.support:
@@ -76,6 +80,8 @@ extension DrawerItemExtension on DrawerItem {
         return Icons.people;
       case DrawerItem.settings:
         return Icons.settings;
+      case DrawerItem.lock:
+        return Icons.password_outlined;
       case DrawerItem.privacy:
         return Icons.lock;
       case DrawerItem.support:
@@ -97,6 +103,7 @@ final Map<DrawerItem, Widget Function(BuildContext)> drawerRoutes = {
   DrawerItem.feedback: (_) => FeedbackScreen(), // Replace with FeedbackScreen()
   DrawerItem.partners: (_) => PartnersPage(),
   DrawerItem.settings: (_) => SettingsPage(),
+  DrawerItem.lock: (_) => LockScreen(isAuthCheck: false, isLockSetup: false),
   DrawerItem.privacy: (_) => PrivacySecurityPage(),
   DrawerItem.support: (_) => HelpSupportPage(),
   DrawerItem.terms: (_) => TermsAndConditionsPage(),

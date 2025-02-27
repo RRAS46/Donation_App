@@ -60,6 +60,14 @@ dependencies:
   dio: ^5.8.0+1
   dash_flags: ^0.1.1
   shared_preferences: ^2.5.2
+  signature: ^5.5.0
+  image: ^4.5.3
+  pdf: ^3.11.3
+  printing: ^5.14.2
+  open_file: ^3.5.10
+  flutter_verification_code_field: ^1.0.0
+  mailto: ^2.0.0
+  animated_leaderboard: ^0.1.4
 
 
 
@@ -92,12 +100,12 @@ flutter:
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
   assets:
+    - assets/panther_transparent_logo.png
     - assets/Privacy_and_Security_Policy.pdf
-    - assets/images/panther_racing_team.jpg
-    - assets/images/feedback.png
-    - assets/images/default.png
-    - assets/check_slider.json
-    - assets/check_slider_bright.json
+    - assets/images/
+    - assets/fonts/
+    - assets/lotties/
+
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
@@ -110,6 +118,10 @@ flutter:
   # "family" key with the font family name, and a "fonts" key with a
   # list giving the asset and other descriptors for the font. For
   # example:
+  fonts:
+    - family: DonationIcons
+      fonts:
+          - asset: assets/fonts/DonationIcons.ttf
   # fonts:
   #   - family: Schyler
   #     fonts:

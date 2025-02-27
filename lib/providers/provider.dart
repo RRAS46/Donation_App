@@ -8,10 +8,12 @@ import 'package:flutter/foundation.dart';
 class ProfileProvider extends ChangeNotifier {
   Profile? _profile;
   int _drawerIndex=DrawerItem.home.getInt();
+  bool _isLocked=true;
 
   /// Returns the current profile.
   Profile? get profile => _profile;
   int get drawerIndex => _drawerIndex;
+  bool get isLocked => _isLocked;
 
   /// Loads the profile from a data source (e.g., API, local storage).
   Future<void> loadProfile() async {
@@ -44,6 +46,11 @@ class ProfileProvider extends ChangeNotifier {
   /// Updates the entire profile.
   void updateProfile(Profile newProfile) {
     _profile = newProfile;
+    notifyListeners();
+  }
+
+  void updateIsLocked(bool isNewLocked) {
+    _isLocked = isNewLocked;
     notifyListeners();
   }
 

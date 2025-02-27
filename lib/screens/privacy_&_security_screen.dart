@@ -1,9 +1,12 @@
 import 'package:dio/dio.dart';
+import 'package:donation_app_v1/const_values/privacy_security_page_values.dart';
 import 'package:donation_app_v1/const_values/title_values.dart';
 import 'package:donation_app_v1/enums/drawer_enum.dart';
 import 'package:donation_app_v1/models/drawer_model.dart';
+import 'package:donation_app_v1/models/settings_model.dart';
 import 'package:donation_app_v1/providers/provider.dart';
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:path_provider/path_provider.dart';
@@ -99,21 +102,30 @@ class _PrivacySecurityPageState extends State<PrivacySecurityPage> {
     return Scaffold(
       drawer: DonationAppDrawer(drawerIndex: DrawerItem.privacy.index,),
       appBar: AppBar(
-        title: Text(PageTitles.getTitle(profileProvider.profile!.settings.language, 'privacy_security_page_title')),
+        title: Text(PageTitles.getTitle(getCurrentLanguage(), 'privacy_security_page_title')),
         backgroundColor: Colors.teal.shade700,
         centerTitle: true,
       ),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildHeader(),
-            SizedBox(height: 20),
-            _buildPrivacySections(),
-            SizedBox(height: 20),
-            _buildPDFSection(),
-          ],
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.tealAccent.shade400, Colors.teal.shade900],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
+        child: SingleChildScrollView(
+          padding: EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildHeader(),
+              SizedBox(height: 20),
+              _buildPrivacySections(),
+              SizedBox(height: 20),
+              _buildPDFSection(),
+            ],
+          ),
         ),
       ),
     );
@@ -132,30 +144,45 @@ class _PrivacySecurityPageState extends State<PrivacySecurityPage> {
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text("Your Privacy & Security", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white)),
-          SizedBox(height: 5),
-          Text("We value your privacy and work hard to keep your information secure.", style: TextStyle(fontSize: 16, color: Colors.white70)),
+          Text(PrivacySecurityLabels.getPrivacyLabel(getCurrentLanguage(), 'privacy_and_security_title'), style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white),textAlign: TextAlign.center,),
+          SizedBox(height: 8),
+          Text(PrivacySecurityLabels.getPrivacyLabel(getCurrentLanguage(), 'privacy_and_security_text'), style: TextStyle(fontSize: 16, color: Colors.white70),textAlign: TextAlign.center),
         ],
       ),
     );
   }
+  String getCurrentLanguage()  {
+    // Ensure that the Hive box is open. If already open, this returns the box immediately.
+    final Box<Settings> settingsBox = Hive.box<Settings>('settingsBox');
 
+    // Retrieve stored settings or use default settings if none are stored.
+    final Settings settings = settingsBox.get('userSettings', defaultValue: Settings.defaultSettings)!;
+
+    // Return the current language as an enum.
+    return  settings.language;
+  }
   // Privacy Sections
   Widget _buildPrivacySections() {
-    List<Map<String, String>> privacyItems = [
-      {"title": "Data Collection", "content": "We collect minimal data necessary for app functionality, such as your email, profile information, and donation history."},
-      {"title": "How We Use Your Data", "content": "Your data is used to enhance your experience, provide customer support, and ensure smooth transactions. We do not sell your data."},
-      {"title": "Third-Party Services", "content": "We may share necessary data with trusted partners for payment processing and analytics, but only as required for app functionality."},
-      {"title": "Security Measures", "content": "We use industry-standard encryption and security protocols to protect your information from unauthorized access."},
-      {"title": "Managing Your Data", "content": "You can update or delete your account information by visiting the settings section or contacting support."},
-      {"title": "Permissions & Access", "content": "We may request access to your camera, storage, and location for specific features. You can manage these permissions in your device settings."},
-    ];
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: privacyItems.map((item) => _buildExpandableItem(item["title"]!, item["content"]!)).toList(),
+      children: [
+        Text(
+          PrivacySecurityLabels.getPrivacyLabel(getCurrentLanguage(), 'privacy_and_security_title'),
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.teal.shade700),
+        ),
+        SizedBox(height: 10),
+        Column(
+          children: PrivacySecurityLabels.getPrivacyItems(getCurrentLanguage()).map((privacy) {
+            // Accessing title and content directly from the map.
+            return _buildExpandableItem(
+                privacy['title'] ?? '',
+                privacy['content'] ?? ''
+            );
+          }).toList(),
+        ),
+      ],
     );
   }
 
@@ -178,8 +205,8 @@ class _PrivacySecurityPageState extends State<PrivacySecurityPage> {
       elevation: 4,
       child: ListTile(
         leading: Icon(Icons.picture_as_pdf, color: Colors.redAccent),
-        title: Text("View Full Privacy Policy"),
-        subtitle: Text("Tap to open the detailed privacy document."),
+        title: Text(PrivacySecurityLabels.getPrivacyLabel(getCurrentLanguage(), 'policy_pdf_title')),
+        subtitle: Text(PrivacySecurityLabels.getPrivacyLabel(getCurrentLanguage(), 'policy_pdf_text')),
         onTap: _openPDFViewer,
       ),
     );
@@ -191,11 +218,21 @@ class PDFViewerScreen extends StatelessWidget {
   final String pdfPath;
 
   PDFViewerScreen({required this.pdfPath});
+  String getCurrentLanguage()  {
+    // Ensure that the Hive box is open. If already open, this returns the box immediately.
+    final Box<Settings> settingsBox = Hive.box<Settings>('settingsBox');
+
+    // Retrieve stored settings or use default settings if none are stored.
+    final Settings settings = settingsBox.get('userSettings', defaultValue: Settings.defaultSettings)!;
+
+    // Return the current language as an enum.
+    return  settings.language;
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Privacy Policy")),
+      appBar: AppBar(title: Text(PrivacySecurityLabels.getPrivacyLabel(getCurrentLanguage(), 'pdf_file_title'))),
       body: PDFView(filePath: pdfPath),
     );
   }

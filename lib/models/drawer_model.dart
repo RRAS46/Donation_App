@@ -1,6 +1,8 @@
+import 'package:donation_app_v1/auth_service.dart';
 import 'package:donation_app_v1/const_values/drawer_values.dart';
 import 'package:donation_app_v1/models/profile_model.dart';
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../enums/drawer_enum.dart';
@@ -28,7 +30,6 @@ class DonationAppDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final drawerProvider = Provider.of<ProfileProvider>(context);
     final user = _supabaseClient.auth.currentUser;
     final username = user?.userMetadata?['username'] ?? 'User';
     final email = user?.email ?? 'tempUser@example.com';
@@ -46,22 +47,23 @@ class DonationAppDrawer extends StatelessWidget {
               padding: EdgeInsets.zero,
               children: [
                 _buildSection(context, MenuTiles.getTile(langCode, 'main_category'), [
-                  _buildNavItem(context, DrawerItem.home, drawerProvider, isTopDonator),
-                  _buildNavItem(context, DrawerItem.profile, drawerProvider, isTopDonator),
-                  _buildNavItem(context, DrawerItem.qrScanner, drawerProvider, isTopDonator),
+                  _buildNavItem(context, DrawerItem.home, drawerIndex, isTopDonator),
+                  _buildNavItem(context, DrawerItem.profile, drawerIndex, isTopDonator),
+                  _buildNavItem(context, DrawerItem.qrScanner, drawerIndex, isTopDonator),
                 ]),
 
                 _buildSection(context, MenuTiles.getTile(langCode, 'settings_category'), [
-                  _buildNavItem(context, DrawerItem.settings, drawerProvider, isTopDonator),
-                  _buildNavItem(context, DrawerItem.privacy, drawerProvider, isTopDonator),
-                  _buildNavItem(context, DrawerItem.terms, drawerProvider, isTopDonator),
+                  _buildNavItem(context, DrawerItem.settings, drawerIndex, isTopDonator),
+                  _buildNavItem(context, DrawerItem.lock, drawerIndex, isTopDonator),
+                  _buildNavItem(context, DrawerItem.privacy, drawerIndex, isTopDonator),
+                  _buildNavItem(context, DrawerItem.terms, drawerIndex, isTopDonator),
                 ]),
 
                 _buildSection(context, MenuTiles.getTile(langCode, 'support_info_category'), [
-                  _buildNavItem(context, DrawerItem.partners, drawerProvider, isTopDonator),
-                  _buildNavItem(context, DrawerItem.support, drawerProvider, isTopDonator),
-                  _buildNavItem(context, DrawerItem.feedback, drawerProvider, isTopDonator),
-                  _buildNavItem(context, DrawerItem.about, drawerProvider, isTopDonator),
+                  _buildNavItem(context, DrawerItem.partners, drawerIndex, isTopDonator),
+                  _buildNavItem(context, DrawerItem.support, drawerIndex, isTopDonator),
+                  _buildNavItem(context, DrawerItem.feedback, drawerIndex, isTopDonator),
+                  _buildNavItem(context, DrawerItem.about, drawerIndex, isTopDonator),
                 ]),
 
                 Divider(),
@@ -122,15 +124,29 @@ class DonationAppDrawer extends StatelessWidget {
   }
 
 // ✨ Styled Nav Items with Hover Effect
-  Widget _buildNavItem(BuildContext context, DrawerItem item, ProfileProvider drawerProvider, bool isTopDonator) {
+  Widget _buildNavItem(BuildContext context, DrawerItem item, int drawerIndex, bool isTopDonator) {
+    final isSelected = drawerIndex == item.index;
+
     return ListTile(
-      leading: Icon(item.icon, color: Colors.teal.shade800, size: 26),
-      title: Text(item.name(context), style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
-      tileColor: drawerProvider.drawerIndex == item.index ? Colors.teal.withOpacity(0.15) : null,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      onTap: () => _navigate(context, item, drawerProvider, isTopDonator),
+      leading: Icon(
+        item.icon,
+        color: isSelected ? Colors.white : Colors.teal.shade800,
+        size: 26,
+      ),
+      title: Text(
+        item.name(context),
+        style: TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.w500,
+          color: isSelected ? Colors.white : Colors.black,
+        ),
+      ),
+      tileColor: isSelected ? Colors.teal.shade800.withOpacity(0.5) : null,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(3)),
+      onTap: () => _navigate(context, item, drawerIndex, isTopDonator),
     );
   }
+
 
 // 🚀 Stylish Logout Button
   Widget _buildLogoutButton(BuildContext context) {
@@ -144,9 +160,12 @@ class DonationAppDrawer extends StatelessWidget {
           padding: EdgeInsets.symmetric(vertical: 12),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
         ),
-        onPressed: () {
+        onPressed: () async{
+
           _supabaseClient.auth.signOut();
-          Navigator.pushNamedAndRemoveUntil(context, '/signIn', (route) => false);
+          final authBox = await Hive.openBox<AuthService>('authBox');
+          AuthService().saveToken(authBox, false);
+          AuthService.getToken(authBox)! ? Navigator.pushNamedAndRemoveUntil(context, '/lock', (Route<dynamic> route) => false) : Navigator.pushNamedAndRemoveUntil(context, '/signIn', (Route<dynamic> route) => false);
         },
         icon: Icon(Icons.logout, size: 22),
         label: Text(MenuTiles.getTile(profileProvider.profile!.settings.language, 'logout_tile'), style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
@@ -154,7 +173,7 @@ class DonationAppDrawer extends StatelessWidget {
     );
   }
 
-  void _navigate(BuildContext context, DrawerItem item, ProfileProvider drawerProvider, bool isTopDonator) {
+  void _navigate(BuildContext context, DrawerItem item, int drawerIndex, bool isTopDonator) {
     if (item == DrawerItem.logout) {
       _supabaseClient.auth.signOut();
       Navigator.pushNamedAndRemoveUntil(context, '/signIn', (route) => false);
@@ -164,9 +183,9 @@ class DonationAppDrawer extends StatelessWidget {
     // Close the drawer
     Navigator.pop(context);
 
-    if (drawerProvider.drawerIndex == item.index) return;
+    if (drawerIndex == item.index) return;
 
-    drawerProvider.updateDrawerIndex(item.index);
+    // drawerProvider.updateDrawerIndex(item.index);
     final pageBuilder = drawerRoutes[item];
 
     if (pageBuilder != null) {
@@ -183,7 +202,7 @@ class DonationAppDrawer extends StatelessWidget {
 
       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => page));
 
-      drawerProvider.updateDrawerIndex(item.index);
+      // drawerProvider.updateDrawerIndex(item.index);
     }
   }
 }

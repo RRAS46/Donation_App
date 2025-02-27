@@ -19,6 +19,7 @@ class MenuTiles {
       'main_category': 'Main',
       'settings_category': 'Settings',
       'support_info_category': 'Category & Info',
+      'lock_tile': 'Lock',
     },
     // Spanish (es)
     'es': {
@@ -36,6 +37,7 @@ class MenuTiles {
       'main_category': 'Principal',
       'settings_category': 'Configuración',
       'support_info_category': 'Categoría & Información',
+      'lock_tile': 'Bloquear',
     },
     // French (fr)
     'fr': {
@@ -53,6 +55,7 @@ class MenuTiles {
       'main_category': 'Principal',
       'settings_category': 'Paramètres',
       'support_info_category': 'Catégorie & Info',
+      'lock_tile': 'Verrouiller',
     },
     // German (de)
     'de': {
@@ -70,6 +73,7 @@ class MenuTiles {
       'main_category': 'Haupt',
       'settings_category': 'Einstellungen',
       'support_info_category': 'Kategorie & Info',
+      'lock_tile': 'Sperren',
     },
     // Italian (it)
     'it': {
@@ -87,6 +91,7 @@ class MenuTiles {
       'main_category': 'Principale',
       'settings_category': 'Impostazioni',
       'support_info_category': 'Categoria & Info',
+      'lock_tile': 'Bloccare',
     },
     // Portuguese (pt)
     'pt': {
@@ -104,6 +109,7 @@ class MenuTiles {
       'main_category': 'Principal',
       'settings_category': 'Configurações',
       'support_info_category': 'Categoria & Info',
+      'lock_tile': 'Bloquear',
     },
     // Dutch (nl)
     'nl': {
@@ -121,6 +127,7 @@ class MenuTiles {
       'main_category': 'Hoofd',
       'settings_category': 'Instellingen',
       'support_info_category': 'Categorie & Info',
+      'lock_tile': 'Vergrendelen',
     },
     // Russian (ru)
     'ru': {
@@ -138,6 +145,7 @@ class MenuTiles {
       'main_category': 'Основное',
       'settings_category': 'Настройки',
       'support_info_category': 'Категория & Инфо',
+      'lock_tile': 'Заблокировать',
     },
     // Chinese (zh)
     'zh': {
@@ -155,13 +163,14 @@ class MenuTiles {
       'main_category': '主要',
       'settings_category': '设置',
       'support_info_category': '类别 & 信息',
+      'lock_tile': '锁定',
     },
     // Japanese (ja)
     'ja': {
       'home_tile': 'ホーム',
       'profile_tile': 'プロフィール',
-      'about_us_tile': 'お問い合わせ',
-      'qr_tile': 'QRをスキャン',
+      'about_us_tile': '会社概要 & お問い合わせ',
+      'qr_tile': 'QRスキャン',
       'feedback_tile': 'フィードバック',
       'settings_tile': '設定',
       'logout_tile': 'ログアウト',
@@ -171,64 +180,68 @@ class MenuTiles {
       'help_support_tile': 'ヘルプ & サポート',
       'main_category': 'メイン',
       'settings_category': '設定',
-      'support_info_category': 'カテゴリ & 情報',
+      'support_info_category': 'カテゴリー & 情報',
+      'lock_tile': 'ロック',
     },
     // Korean (ko)
     'ko': {
       'home_tile': '홈',
       'profile_tile': '프로필',
-      'about_us_tile': '소개 & 연락처',
+      'about_us_tile': '회사 소개 & 문의하기',
       'qr_tile': 'QR 스캔',
       'feedback_tile': '피드백',
       'settings_tile': '설정',
       'logout_tile': '로그아웃',
-      'privacy_security_tile': '개인정보 & 보안',
-      'terms_conditions_tile': '이용약관',
+      'privacy_security_tile': '개인정보 보호 & 보안',
+      'terms_conditions_tile': '약관',
       'partners_tile': '파트너',
       'help_support_tile': '도움말 & 지원',
-      'main_category': '주요',
+      'main_category': '메인',
       'settings_category': '설정',
       'support_info_category': '카테고리 & 정보',
+      'lock_tile': '잠금',
     },
     // Arabic (ar)
     'ar': {
       'home_tile': 'الرئيسية',
       'profile_tile': 'الملف الشخصي',
-      'about_us_tile': 'حول & اتصل بنا',
+      'about_us_tile': 'من نحن & اتصل بنا',
       'qr_tile': 'مسح QR',
-      'feedback_tile': 'الملاحظات',
+      'feedback_tile': 'ملاحظات',
       'settings_tile': 'الإعدادات',
       'logout_tile': 'تسجيل الخروج',
       'privacy_security_tile': 'الخصوصية & الأمان',
       'terms_conditions_tile': 'الشروط & الأحكام',
       'partners_tile': 'الشركاء',
       'help_support_tile': 'المساعدة & الدعم',
-      'main_category': 'رئيسي',
+      'main_category': 'الرئيسية',
       'settings_category': 'الإعدادات',
       'support_info_category': 'الفئة & المعلومات',
+      'lock_tile': 'قفل',
     },
     // Hindi (hi)
     'hi': {
       'home_tile': 'होम',
-      'profile_tile': 'प्रोफ़ाइल',
-      'about_us_tile': 'हमारे बारे में & संपर्क',
-      'qr_tile': 'QR स्कैन करें',
+      'profile_tile': 'प्रोफाइल',
+      'about_us_tile': 'हमारे बारे में & संपर्क करें',
+      'qr_tile': 'क्यूआर स्कैन करें',
       'feedback_tile': 'प्रतिक्रिया',
       'settings_tile': 'सेटिंग्स',
       'logout_tile': 'लॉग आउट',
       'privacy_security_tile': 'गोपनीयता & सुरक्षा',
       'terms_conditions_tile': 'नियम & शर्तें',
       'partners_tile': 'साझेदार',
-      'help_support_tile': 'मदद & समर्थन',
+      'help_support_tile': 'सहायता & समर्थन',
       'main_category': 'मुख्य',
       'settings_category': 'सेटिंग्स',
       'support_info_category': 'श्रेणी & जानकारी',
+      'lock_tile': 'लॉक',
     },
     // Turkish (tr)
     'tr': {
       'home_tile': 'Ana Sayfa',
       'profile_tile': 'Profil',
-      'about_us_tile': 'Hakkımızda & İletişim',
+      'about_us_tile': 'Hakkında & İletişim',
       'qr_tile': 'QR Tara',
       'feedback_tile': 'Geri Bildirim',
       'settings_tile': 'Ayarlar',
@@ -240,12 +253,13 @@ class MenuTiles {
       'main_category': 'Ana',
       'settings_category': 'Ayarlar',
       'support_info_category': 'Kategori & Bilgi',
+      'lock_tile': 'Kilitle',
     },
     // Thai (th)
     'th': {
       'home_tile': 'หน้าหลัก',
       'profile_tile': 'โปรไฟล์',
-      'about_us_tile': 'เกี่ยวกับเรา & ติดต่อ',
+      'about_us_tile': 'เกี่ยวกับเรา & ติดต่อเรา',
       'qr_tile': 'สแกน QR',
       'feedback_tile': 'ข้อเสนอแนะ',
       'settings_tile': 'การตั้งค่า',
@@ -256,28 +270,30 @@ class MenuTiles {
       'help_support_tile': 'ช่วยเหลือ & สนับสนุน',
       'main_category': 'หลัก',
       'settings_category': 'การตั้งค่า',
-      'support_info_category': 'หมวด & ข้อมูล',
+      'support_info_category': 'หมวดหมู่ & ข้อมูล',
+      'lock_tile': 'ล็อค',
     },
     // Swedish (sv)
     'sv': {
       'home_tile': 'Hem',
       'profile_tile': 'Profil',
-      'about_us_tile': 'Om & Kontakta Oss',
+      'about_us_tile': 'Om Oss & Kontakt',
       'qr_tile': 'Skanna QR',
       'feedback_tile': 'Feedback',
       'settings_tile': 'Inställningar',
       'logout_tile': 'Logga Ut',
-      'privacy_security_tile': 'Sekretess & Säkerhet',
+      'privacy_security_tile': 'Integritet & Säkerhet',
       'terms_conditions_tile': 'Villkor',
       'partners_tile': 'Partners',
       'help_support_tile': 'Hjälp & Support',
       'main_category': 'Huvud',
       'settings_category': 'Inställningar',
       'support_info_category': 'Kategori & Info',
+      'lock_tile': 'Lås',
     },
     // Greek (el)
     'el': {
-      'home_tile': 'Αρχική',
+      'home_tile': 'Αρχική Σελίδα',
       'profile_tile': 'Προφίλ',
       'about_us_tile': 'Σχετικά & Επικοινωνία',
       'qr_tile': 'Σάρωση QR',
@@ -288,9 +304,10 @@ class MenuTiles {
       'terms_conditions_tile': 'Όροι & Προϋποθέσεις',
       'partners_tile': 'Συνεργάτες',
       'help_support_tile': 'Βοήθεια & Υποστήριξη',
-      'main_category': 'Κύρια',
+      'main_category': 'Κύριο',
       'settings_category': 'Ρυθμίσεις',
       'support_info_category': 'Κατηγορία & Πληροφορίες',
+      'lock_tile': 'Κλείδωμα',
     },
     // Polish (pl)
     'pl': {
@@ -302,12 +319,13 @@ class MenuTiles {
       'settings_tile': 'Ustawienia',
       'logout_tile': 'Wyloguj',
       'privacy_security_tile': 'Prywatność & Bezpieczeństwo',
-      'terms_conditions_tile': 'Regulamin',
+      'terms_conditions_tile': 'Warunki & Regulamin',
       'partners_tile': 'Partnerzy',
       'help_support_tile': 'Pomoc & Wsparcie',
-      'main_category': 'Główna',
+      'main_category': 'Główne',
       'settings_category': 'Ustawienia',
-      'support_info_category': 'Kategoria & Info',
+      'support_info_category': 'Kategoria & Informacje',
+      'lock_tile': 'Zablokuj',
     },
     // Vietnamese (vi)
     'vi': {
@@ -318,15 +336,18 @@ class MenuTiles {
       'feedback_tile': 'Phản Hồi',
       'settings_tile': 'Cài Đặt',
       'logout_tile': 'Đăng Xuất',
-      'privacy_security_tile': 'Riêng Tư & Bảo Mật',
+      'privacy_security_tile': 'Bảo Mật & Quyền Riêng Tư',
       'terms_conditions_tile': 'Điều Khoản & Điều Kiện',
       'partners_tile': 'Đối Tác',
       'help_support_tile': 'Trợ Giúp & Hỗ Trợ',
       'main_category': 'Chính',
       'settings_category': 'Cài Đặt',
       'support_info_category': 'Danh Mục & Thông Tin',
+      'lock_tile': 'Khóa',
     },
   };
+
+
 
   static String getTile(String langCode, String key) {
     return labels[langCode]?[key] ?? key;

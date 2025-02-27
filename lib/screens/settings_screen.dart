@@ -1,4 +1,6 @@
 import 'package:dash_flags/dash_flags.dart';
+import 'package:donation_app_v1/auth_service.dart';
+import 'package:donation_app_v1/const_values/settings_page_values.dart';
 import 'package:donation_app_v1/const_values/title_values.dart';
 import 'package:donation_app_v1/enums/currency_enum.dart';
 import 'package:donation_app_v1/enums/drawer_enum.dart';
@@ -6,6 +8,9 @@ import 'package:donation_app_v1/enums/language_enum.dart';
 import 'package:donation_app_v1/models/drawer_model.dart';
 import 'package:donation_app_v1/models/settings_model.dart'; // Hive-enabled Settings model.
 import 'package:donation_app_v1/providers/provider.dart';
+import 'package:donation_app_v1/screens/change_email_screen.dart';
+import 'package:donation_app_v1/screens/change_username_screen.dart';
+import 'package:donation_app_v1/screens/lock_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
@@ -36,6 +41,18 @@ class _SettingsPageState extends State<SettingsPage> {
     updateProfileSettings(); // Save settings
     super.dispose();
   }
+  String getCurrentLanguage()  {
+    // Ensure that the Hive box is open. If already open, this returns the box immediately.
+    final Box<Settings> settingsBox = Hive.box<Settings>('settingsBox');
+
+    // Retrieve stored settings or use default settings if none are stored.
+    final Settings settings = settingsBox.get('userSettings', defaultValue: Settings.defaultSettings)!;
+
+    // Return the current language as an enum.
+    return  settings.language;
+  }
+
+
   @override
   Widget build(BuildContext context) {
     final profileProvider = Provider.of<ProfileProvider>(context);
@@ -44,108 +61,148 @@ class _SettingsPageState extends State<SettingsPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(PageTitles.getTitle(profileProvider.profile!.settings.language, 'settings_page_title'), style: TextStyle(fontWeight: FontWeight.bold)),
+        title: Text(
+          PageTitles.getTitle(profileProvider.profile!.settings.language, 'settings_page_title'),
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+        ),
         backgroundColor: Colors.teal.shade700,
-        elevation: 0,
+        elevation: 4,
         centerTitle: true,
       ),
-      drawer: DonationAppDrawer(drawerIndex: DrawerItem.settings.index,),
+      drawer: DonationAppDrawer(drawerIndex: DrawerItem.settings.index),
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [Colors.teal.shade700, Colors.tealAccent.shade200],
+            colors: [Colors.teal.shade900,Colors.tealAccent.shade400 ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
         ),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
             _buildProfileSection(),
+            SizedBox(height: 20),
             Expanded(
-              child: Card(
-                margin: EdgeInsets.symmetric(vertical: 16,horizontal: 4),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                child: Padding(
-                  padding: EdgeInsets.symmetric(vertical: 16,horizontal: 4),
-                  child: ListView(
-                    children: [
-                      // Notification toggle
-                      _buildSettingsSwitch(
-                        title: "Enable Notifications",
-                        value: settings.notificationsEnabled,
-                        icon: Icons.notifications,
-                        onChanged: (val) {
-                          final newSettings = settings.copyWith(notificationsEnabled: val);
-                          _updateSettings(newSettings, profileProvider);
-                        },
-                      ),
-                      // Dark mode toggle
-                      _buildSettingsSwitch(
-                        title: "Dark Mode",
-                        value: isDarkMode,
-                        icon: Icons.dark_mode,
-                        onChanged: (val) {
-                          final newSettings = settings.copyWith(theme: val ? "dark" : "light");
-                          _updateSettings(newSettings, profileProvider);
-                        },
-                      ),
-                      // Language dropdown
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
-                        child: _buildLanguageDropdown(profileProvider),
-                      ),
-                      // Currency dropdown
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
-                        child: _buildCurrencyDropdown(profileProvider),
-                      ),
-                      // Font size slider
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
-                        child: _buildFontSizeSlider(profileProvider),
-                      ),
-                      // Privacy mode toggle
-                      _buildSettingsSwitch(
-                        title: "Privacy Mode",
-                        value: settings.privacyMode,
-                        icon: Icons.lock,
-                        onChanged: (val) {
-                          final newSettings = settings.copyWith(privacyMode: val);
-                          _updateSettings(newSettings, profileProvider);
-                        },
-                      ),
-                      // Accent color dropdown
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
-                        child: _buildAccentColorDropdown(profileProvider),
-                      ),
-                      // Notification sound dropdown
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
-                        child: _buildNotificationSoundDropdown(profileProvider),
-                      ),
-                      // Layout mode dropdown
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
-                        child: _buildLayoutModeDropdown(profileProvider),
-                      ),
-                      Divider(),
-                      _buildSettingsItem("Privacy Policy", Icons.privacy_tip, _showPrivacyPolicy),
-                      _buildSettingsItem("Terms & Conditions", Icons.description, _showTerms),
-                      Divider(),
-                      _buildSettingsItem("About", Icons.info, _showAboutDialog),
-                      _buildSettingsItem("Logout", Icons.exit_to_app, _logout, color: Colors.red),
-                    ],
+              child: SingleChildScrollView(
+                child: Card(
+                  margin: EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                  elevation: 6,
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(vertical: 16, horizontal: 12),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildCategoryHeader(SettingsLabels.getLabel(getCurrentLanguage(), 'profile_settings_section')),
+                        _buildSettingsItem(SettingsLabels.getLabel(getCurrentLanguage(), 'username_button'), Icons.account_circle, () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => ChangeUsernameScreen()),
+                          );
+                        },),
+                        // _buildSettingsItem(SettingsLabels.getLabel(getCurrentLanguage(), 'email_button'), Icons.email, () {
+                        //   Navigator.push(
+                        //     context,
+                        //     MaterialPageRoute(builder: (context) => ChangeEmailPage()),
+                        //   );
+                        // },),
+                        _buildSettingsItem(SettingsLabels.getLabel(getCurrentLanguage(), '6-Digit Code'), Icons.password_outlined, () {
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => LockScreen(isAuthCheck: false,isLockSetup: true),));
+                        },),
+                        SizedBox(height: 20),
+                        Divider(thickness: 1.2, color: Colors.grey.shade300),
+                        SizedBox(height: 20),
+
+                        _buildCategoryHeader(SettingsLabels.getLabel(getCurrentLanguage(), 'app_settings_section')),
+                        _buildSettingsSwitch(
+                          title: SettingsLabels.getLabel(getCurrentLanguage(), 'dark_mode'),
+                          value: isDarkMode,
+                          icon: Icons.dark_mode,
+                          onChanged: (val) {
+                            final newSettings = settings.copyWith(theme: val ? "dark" : "light");
+                            _updateSettings(newSettings, profileProvider);
+                          },
+                        ),
+                        SizedBox(height: 16),
+                        _buildLanguageDropdown(profileProvider),
+                        SizedBox(height: 16),
+                        _buildCurrencyDropdown(profileProvider),
+                        // SizedBox(height: 16),
+                        // _buildFontSizeSlider(profileProvider),
+
+                        SizedBox(height: 20),
+                        Divider(thickness: 1.2, color: Colors.grey.shade300),
+                        SizedBox(height: 20),
+
+                        _buildCategoryHeader(SettingsLabels.getLabel(getCurrentLanguage(), 'notifications_section')),
+                        _buildSettingsSwitch(
+                          title: SettingsLabels.getLabel(getCurrentLanguage(), 'enable_notifications'),
+                          value: settings.notificationsEnabled,
+                          icon: Icons.notifications,
+                          onChanged: (val) {
+                            final newSettings = settings.copyWith(notificationsEnabled: val);
+                            _updateSettings(newSettings, profileProvider);
+                          },
+                        ),
+                        _buildNotificationSoundDropdown(profileProvider),
+
+                        SizedBox(height: 20),
+                        Divider(thickness: 1.2, color: Colors.grey.shade300),
+                        SizedBox(height: 20),
+
+                        _buildCategoryHeader(SettingsLabels.getLabel(getCurrentLanguage(), 'privacy_security_section')),
+                        _buildSettingsSwitch(
+                          title: SettingsLabels.getLabel(getCurrentLanguage(), 'privacy_mode'),
+                          value: settings.privacyMode,
+                          icon: Icons.lock,
+                          onChanged: (val) {
+                            final newSettings = settings.copyWith(privacyMode: val);
+                            _updateSettings(newSettings, profileProvider);
+                          },
+                        ),
+                        _buildAccentColorDropdown(profileProvider),
+                        SizedBox(height: 16),
+                        _buildLayoutModeDropdown(profileProvider),
+
+                        SizedBox(height: 20),
+                        Divider(thickness: 1.2, color: Colors.grey.shade300),
+                        SizedBox(height: 20),
+
+                        _buildCategoryHeader(SettingsLabels.getLabel(getCurrentLanguage(), 'account_section')),
+                        _buildSettingsItem(SettingsLabels.getLabel(getCurrentLanguage(), 'privacy_policy_button'), Icons.privacy_tip, _showPrivacyPolicy),
+                        _buildSettingsItem(SettingsLabels.getLabel(getCurrentLanguage(), 'terms_conditions_button'), Icons.description, _showTerms),
+
+                        SizedBox(height: 20),
+                        Divider(thickness: 1.2, color: Colors.grey.shade300),
+                        SizedBox(height: 20),
+
+                        _buildSettingsItem(SettingsLabels.getLabel(getCurrentLanguage(), 'about_button'), Icons.info, _showAboutDialog),
+                        _buildSettingsItem(SettingsLabels.getLabel(getCurrentLanguage(), 'logout_button'), Icons.exit_to_app, _logout, color: Colors.red),
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
+            )
           ],
         ),
       ),
     );
   }
-
+  Widget _buildCategoryHeader(String title) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+      child: Text(
+        title,
+        style: TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+          color: Colors.teal.shade800,
+        ),
+      ),
+    );
+  }
   // Profile Section
   Widget _buildProfileSection() {
     final user = _supabaseClient.auth.currentUser;
@@ -236,7 +293,7 @@ class _SettingsPageState extends State<SettingsPage> {
         Flexible(
           child: DropdownButtonFormField<Languages>(
             decoration: InputDecoration(
-              labelText: "Select Language",
+              labelText: SettingsLabels.getLabel(getCurrentLanguage(), 'select_language_hint'),
               labelStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
               border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
               contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -284,7 +341,7 @@ class _SettingsPageState extends State<SettingsPage> {
         Flexible(
           child: DropdownButtonFormField<Currency>(
             decoration: InputDecoration(
-              labelText: "Select Currency",
+              labelText: SettingsLabels.getLabel(getCurrentLanguage(), 'select_currency_hint'),
               labelStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
               border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
               contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -335,7 +392,7 @@ class _SettingsPageState extends State<SettingsPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text("Font Size", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+        Text(SettingsLabels.getLabel(getCurrentLanguage(), 'font_size'), style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
         Slider(
           min: 10.0,
           max: 30.0,
@@ -374,7 +431,7 @@ class _SettingsPageState extends State<SettingsPage> {
         Expanded(
           child: DropdownButtonFormField<String>(
             decoration: InputDecoration(
-              labelText: "Accent Color",
+              labelText: SettingsLabels.getLabel(getCurrentLanguage(), 'accent_color_hint'),
               border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
             ),
             value: currentColorName,
@@ -408,7 +465,7 @@ class _SettingsPageState extends State<SettingsPage> {
         Expanded(
           child: DropdownButtonFormField<String>(
             decoration: InputDecoration(
-              labelText: "Notification Sound",
+              labelText: SettingsLabels.getLabel(getCurrentLanguage(), 'notification_sound_hint'),
               border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
             ),
             value: currentSound,
@@ -442,7 +499,7 @@ class _SettingsPageState extends State<SettingsPage> {
         Expanded(
           child: DropdownButtonFormField<String>(
             decoration: InputDecoration(
-              labelText: "Layout Mode",
+              labelText:SettingsLabels.getLabel(getCurrentLanguage(), 'layout_mode_hint'),
               border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
             ),
             value: currentLayout,
@@ -536,9 +593,11 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 
   // Logout action
-  void _logout() {
+  void _logout() async{
     print("User Logged Out");
     _supabaseClient.auth.signOut();
-    Navigator.pushNamedAndRemoveUntil(context, '/signIn', (Route<dynamic> route) => false);
+    final authBox = await Hive.openBox<AuthService>('authBox');
+    AuthService().saveToken(authBox, false);
+    AuthService.getToken(authBox)! ? Navigator.pushNamedAndRemoveUntil(context, '/lock', (Route<dynamic> route) => false) : Navigator.pushNamedAndRemoveUntil(context, '/signIn', (Route<dynamic> route) => false);
   }
 }

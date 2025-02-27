@@ -1,8 +1,13 @@
+import 'package:donation_app_v1/const_values/about_us_page_values.dart';
 import 'package:donation_app_v1/const_values/title_values.dart';
 import 'package:donation_app_v1/enums/drawer_enum.dart';
+import 'package:donation_app_v1/icons/donation_icons_icons.dart';
 import 'package:donation_app_v1/models/drawer_model.dart';
+import 'package:donation_app_v1/models/settings_model.dart';
 import 'package:donation_app_v1/providers/provider.dart';
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:mailto/mailto.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -17,6 +22,16 @@ class AboutUsPage extends StatelessWidget {
     )) {
       throw Exception('Could not launch $url');
     }
+  }
+  String getCurrentLanguage()  {
+    // Ensure that the Hive box is open. If already open, this returns the box immediately.
+    final Box<Settings> settingsBox = Hive.box<Settings>('settingsBox');
+
+    // Retrieve stored settings or use default settings if none are stored.
+    final Settings settings = settingsBox.get('userSettings', defaultValue: Settings.defaultSettings)!;
+
+    // Return the current language as an enum.
+    return  settings.language;
   }
 
   @override
@@ -81,61 +96,67 @@ class AboutUsPage extends StatelessWidget {
               ),
               const SizedBox(height: 20),
               _buildSection(
-                title: 'Η Αποστολή μας',
-                content: 'Στο Panther Racing Team AUTH, συνδυάζουμε την ακαδημαϊκή γνώση με την πρακτική εμπειρία για να σχεδιάσουμε, να κατασκευάσουμε και να συναρμολογήσουμε μοτοσικλέτες υψηλών επιδόσεων από την αρχή.',
+                title: AboutUsLabels.getLabel(0, getCurrentLanguage(), 'title'),
+                content: AboutUsLabels.getLabel(0, getCurrentLanguage(), 'content'),
                 icon: Icons.lightbulb_outline,
               ),
               const Divider(),
               _buildSection(
-                title: 'Το Ταξίδι',
-                content: 'Από την πρώτη ιδέα έως την κατασκευή κάθε εξαρτήματος, το ταξίδι μας αντικατοπτρίζει την ομαδικότητα, τη δημιουργικότητα και την επιμονή.',
+                title: AboutUsLabels.getLabel(1, getCurrentLanguage(), 'title'),
+                content: AboutUsLabels.getLabel(1, getCurrentLanguage(), 'content'),
                 icon: Icons.emoji_events_outlined,
               ),
               const Divider(),
               _buildSection(
-                title: 'Motostudent - Μια Παγκόσμια Σκηνή',
-                content: 'Το Motostudent είναι ένας διεθνής διαγωνισμός που μας δίνει την ευκαιρία να δοκιμάσουμε τις μηχανικές μας δεξιότητες και την καινοτομία μας.',
+                title: AboutUsLabels.getLabel(2, getCurrentLanguage(), 'title'),
+                content: AboutUsLabels.getLabel(2, getCurrentLanguage(), 'content'),
                 icon: Icons.flag_outlined,
               ),
               const Divider(),
               _buildSection(
-                title: 'Γιατί Χρειαζόμαστε τη Στήριξή σας',
-                content: 'Η υποστήριξή σας μας βοηθά να αποκτήσουμε υλικά, να βελτιώσουμε το σχέδιό μας και να καλύψουμε τα έξοδα ταξιδιού για τον διαγωνισμό.',
+                title: AboutUsLabels.getLabel(3, getCurrentLanguage(), 'title'),
+                content: AboutUsLabels.getLabel(3, getCurrentLanguage(), 'content'),
                 icon: Icons.volunteer_activism,
               ),
               const Divider(),
               _buildSection(
-                title: 'Στηρίξτε μας',
-                content: 'Ακολουθήστε μας στα κοινωνικά μέσα και υποστηρίξτε την ομάδα μας με ένα απλό κλικ.',
+                title: AboutUsLabels.getLabel(4, getCurrentLanguage(), 'title'),
+                content: AboutUsLabels.getLabel(4, getCurrentLanguage(), 'content'),
                 icon: Icons.support,
               ),
+              const Divider(),
+
               Center(
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     IconButton(
-                      icon: Icon(Icons.favorite, color: Colors.teal.shade600),
+                      icon: Icon(DonationIcons.instagram, color: Colors.pink.shade600,size: 30,),
                       onPressed: () => _launchInAppWithBrowserOptions(Uri.parse('https://instagram.com/panther_racing')),
                     ),
                     IconButton(
-                      icon: Icon(Icons.language, color: Colors.blue.shade600),
+                      icon: Icon(DonationIcons.globe, color: Colors.blue.shade600,size: 30,),
                       onPressed: () => _launchInAppWithBrowserOptions(Uri.parse('https://pantherauth.gr')),
                     ),
                     IconButton(
-                      icon: Icon(Icons.contact_mail, color: Colors.green.shade600),
-                      onPressed: () => _launchInAppWithBrowserOptions(Uri.parse('mailto:support@panther_racing.com')),
+                      icon: Icon(DonationIcons.email, color: Colors.green.shade600,size: 30,),
+                      onPressed: () => _sendEmail('pantherracing@gmail.com','',''),
                     ),
                     IconButton(
-                      icon: Icon(Icons.video_library, color: Colors.red.shade600),
-                      onPressed: () => _launchInAppWithBrowserOptions(Uri.parse('https://youtube.com/panther_racing')),
+                      icon: Icon(DonationIcons.youtube, color: Colors.red.shade600,size: 30,),
+                      onPressed: () => _launchInAppWithBrowserOptions(Uri.parse('https://youtube.com/@pantheracingau')),
                     ),
                     IconButton(
-                      icon: Icon(Icons.tiktok, color: Colors.black),
+                      icon: Icon(Icons.tiktok, color: Colors.black,size: 30,),
                       onPressed: () => _launchInAppWithBrowserOptions(Uri.parse('https://tiktok.com/@panther_racing')),
                     ),
                     IconButton(
-                      icon: Icon(Icons.link, color: Colors.blueAccent),
-                      onPressed: () => _launchInAppWithBrowserOptions(Uri.parse('https://linkedin.com/company/panther_racing')),
+                      icon: Icon(DonationIcons.linkedin, color: Colors.blueAccent,size: 30,),
+                      onPressed: () => _launchInAppWithBrowserOptions(Uri.parse('https://gr.linkedin.com/company/panther-racing-auth')),
+                    ),
+                    IconButton(
+                      icon: Icon(DonationIcons.github_circled, color: Colors.black,size: 30,),
+                      onPressed: () => _launchInAppWithBrowserOptions(Uri.parse('https://github.com/Panther-Racing-AUTh')),
                     ),
                   ],
                 ),
@@ -147,7 +168,15 @@ class AboutUsPage extends StatelessWidget {
       ),
     );
   }
-
+// Function to send an email
+  Future<void> _sendEmail(String email,String subject ,String body) async {
+    final Uri launchUri = Uri(
+      scheme: 'mailto',
+      path: email,
+      query: 'subject=$subject&body=$body', //add subject and body here
+    );
+    await launchUrl(launchUri);
+  }
   Widget _buildSection({
     required String title,
     required String content,
